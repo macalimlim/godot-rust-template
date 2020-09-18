@@ -1,0 +1,22 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+reloadable=true
+
+[entry]
+
+Android.armeabi-v7a="./target/armv7-linux-androideabi/lib{{crate_name}}.so"
+Android.arm64-v8a="./target/aarch64-linux-android/lib{{crate_name}}.so"
+OSX.64="./target/lib{{crate_name}}.dylib"
+Windows.64="./target/{{crate_name}}.dll"
+X11.64="./target/lib{{crate_name}}.so"
+
+[dependencies]
+
+Android.armeabi-v7a=[  ]
+Android.arm64-v8a=[  ]
+OSX.64=[  ]
+Windows.64=[  ]
+X11.64=[  ]

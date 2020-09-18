@@ -1,0 +1,2 @@
+[template]
+include = ["Cargo.toml", "LICENSE", "README.md", "export_presets.cfg", "game.gdnlib", "project.godot", "shell.nix", ".vscode/launch.json"]
