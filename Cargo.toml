@@ -8,5 +8,5 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-gdnative = "0.9.0-preview.0"
+gdnative = "0.9.0"
 # gdnative = { path = "../godot-rust/gdnative" }
