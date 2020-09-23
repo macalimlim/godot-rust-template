@@ -1,33 +1,33 @@
 audit:
 	cargo-audit audit
 
-build: clean build-aarch64-linux-android build-armv7-linux-androideabi build-x11
+build: clean build-aarch64-linux-android build-armv7-linux-androideabi build-x86_64-unknown-linux-gnu
 
-build-release: clean build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-x11-release
+build-release: clean build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-x86_64-unknown-linux-gnu-release
 
 build-aarch64-linux-android:
 	cargo build --target aarch64-linux-android
-	mv -b ./target/aarch64-linux-android/debug/*.so ./target/aarch64-linux-android
+	mv -b ./target/aarch64-linux-android/debug/*.so ./native/lib/aarch64-linux-android
 
 build-aarch64-linux-android-release:
 	cargo build --target aarch64-linux-android --release
-	mv -b ./target/aarch64-linux-android/release/*.so ./target/aarch64-linux-android
+	mv -b ./target/aarch64-linux-android/release/*.so ./native/lib/aarch64-linux-android
 
 build-armv7-linux-androideabi:
 	cargo build --target armv7-linux-androideabi
-	mv -b ./target/armv7-linux-androideabi/debug/*.so ./target/armv7-linux-androideabi
+	mv -b ./target/armv7-linux-androideabi/debug/*.so ./native/lib/armv7-linux-androideabi
 
 build-armv7-linux-androideabi-release:
 	cargo build --target armv7-linux-androideabi --release
-	mv -b ./target/armv7-linux-androideabi/release/*.so ./target/armv7-linux-androideabi
+	mv -b ./target/armv7-linux-androideabi/release/*.so ./native/lib/armv7-linux-androideabi
 
-build-x11:
-	cargo build
-	mv -b ./target/debug/*.so ./target/
+build-x86_64-unknown-linux-gnu:
+	cargo build --target x86_64-unknown-linux-gnu
+	mv -b ./target/x86_64-unknown-linux-gnu/debug/*.so ./native/lib/x86_64-unknown-linux-gnu
 
-build-x11-release:
-	cargo build --release
-	mv -b ./target/release/*.so ./target/
+build-x86_64-unknown-linux-gnu-release:
+	cargo build --target x86_64-unknown-linux-gnu --release
+	mv -b ./target/x86_64-unknown-linux-gnu/release/*.so ./native/lib/x86_64-unknown-linux-gnu
 
 check: clean
 	cargo check
@@ -43,24 +43,24 @@ edit:
 	godot -e &
 
 release: build-release
-	godot --export "Android" ./target/{{project-name}}.apk
-	godot --export "Linux/X11" ./target/{{project-name}}
+	godot --export "Android" ./native/bin/android/{{project-name}}.apk
+	godot --export "Linux/X11" ./native/bin/linux-x11/{{project-name}}.x86_64
 
 release-debug: build
-	godot --export-debug "Android" ./target/{{project-name}}.apk
-	godot --export-debug "Linux/X11" ./target/{{project-name}}
+	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
+	godot --export-debug "Linux/X11" ./target/{{project-name}}.debug.x86_64
 
 release-android: build-aarch64-linux-android-release build-armv7-linux-androideabi-release
-	godot --export "Android" ./target/{{project-name}}.apk
+	godot --export "Android" ./native/bin/android/{{project-name}}.apk
 
 release-android-debug: build-aarch64-linux-android build-armv7-linux-androideabi
-	godot --export-debug "Android" ./target/{{project-name}}.apk
+	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
 
-release-x11: build-x11-release
-	godot --export "Linux/X11" ./target/{{project-name}}
+release-linux-x11: build-x11-release
+	godot --export "Linux/X11" ./native/bin/linux-x11/{{project-name}}.x86_64
 
-release-x11-debug: build-x11
-	godot --export-debug "Linux/X11" ./target/{{project-name}}
+release-linux-x11-debug: build-x11
+	godot --export-debug "Linux/X11" ./native/bin/linux-x11/{{project-name}}.debug.x86_64
 
 run: build-x11
 	godot -d

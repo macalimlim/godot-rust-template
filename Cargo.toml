@@ -10,3 +10,6 @@ crate-type = ["cdylib"]
 [dependencies]
 gdnative = "0.9.0"
 # gdnative = { path = "../godot-rust/gdnative" }
+
+[build-dependencies]
+gdnative-project-utils = "0.1.2"
