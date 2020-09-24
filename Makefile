@@ -42,24 +42,24 @@ edit:
 	$EDITOR src/lib.rs &
 	godot -e &
 
-release: build-release
+release: build-release clean
 	godot --export "Android" ./native/bin/android/{{project-name}}.apk
 	godot --export "Linux/X11" ./native/bin/linux-x11/{{project-name}}.x86_64
 
-release-debug: build
+release-debug: build clean
 	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
 	godot --export-debug "Linux/X11" ./target/{{project-name}}.debug.x86_64
 
-release-android: build-aarch64-linux-android-release build-armv7-linux-androideabi-release
+release-android: build-aarch64-linux-android-release build-armv7-linux-androideabi-release clean
 	godot --export "Android" ./native/bin/android/{{project-name}}.apk
 
-release-android-debug: build-aarch64-linux-android build-armv7-linux-androideabi
+release-android-debug: build-aarch64-linux-android build-armv7-linux-androideabi clean
 	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
 
-release-linux-x11: build-x11-release
+release-linux-x11: build-x11-release clean
 	godot --export "Linux/X11" ./native/bin/linux-x11/{{project-name}}.x86_64
 
-release-linux-x11-debug: build-x11
+release-linux-x11-debug: build-x11 clean
 	godot --export-debug "Linux/X11" ./native/bin/linux-x11/{{project-name}}.debug.x86_64
 
 run: build-x11
