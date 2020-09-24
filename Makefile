@@ -64,7 +64,7 @@ release: build-release clean
 
 release-debug: build clean
 	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
-	godot --export-debug "Linux/X11" ./target/{{project-name}}.debug.x86_64
+	godot --export-debug "Linux/X11" ./native/bin/linux-x11/{{project-name}}.debug.x86_64
 
 release-android: build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-i686-linux-android build-x86_64-linux-android clean
 	godot --export "Android" ./native/bin/android/{{project-name}}.apk
@@ -72,13 +72,13 @@ release-android: build-aarch64-linux-android-release build-armv7-linux-androidea
 release-android-debug: build-aarch64-linux-android build-armv7-linux-androideabi build-i686-linux-android-release build-x86_64-linux-android-release clean
 	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
 
-release-linux-x11: build-x11-release clean
+release-linux-x11: build-x86_64-unknown-linux-gnu-release clean
 	godot --export "Linux/X11" ./native/bin/linux-x11/{{project-name}}.x86_64
 
-release-linux-x11-debug: build-x11 clean
+release-linux-x11-debug: build-x86_64-unknown-linux-gnu clean
 	godot --export-debug "Linux/X11" ./native/bin/linux-x11/{{project-name}}.debug.x86_64
 
-run: build-x11
+run: build-x86_64-unknown-linux-gnu
 	godot -d
 
 shell:
