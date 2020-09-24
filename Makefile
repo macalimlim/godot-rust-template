@@ -1,9 +1,9 @@
 audit:
 	cargo-audit audit
 
-build: clean build-aarch64-linux-android build-armv7-linux-androideabi build-x86_64-unknown-linux-gnu
+build: clean build-aarch64-linux-android build-armv7-linux-androideabi build-i686-linux-android build-x86_64-linux-android build-x86_64-unknown-linux-gnu
 
-build-release: clean build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-x86_64-unknown-linux-gnu-release
+build-release: clean build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-i686-linux-android-release build-x86_64-linux-android-release build-x86_64-unknown-linux-gnu-release
 
 build-aarch64-linux-android:
 	cargo build --target aarch64-linux-android
@@ -20,6 +20,22 @@ build-armv7-linux-androideabi:
 build-armv7-linux-androideabi-release:
 	cargo build --target armv7-linux-androideabi --release
 	mv -b ./target/armv7-linux-androideabi/release/*.so ./native/lib/armv7-linux-androideabi
+
+build-i686-linux-android:
+	cargo build --target i686-linux-android
+	mv -b ./target/i686-linux-android/debug/*.so ./native/lib/i686-linux-android
+
+build-i686-linux-android-release:
+	cargo build --target i686-linux-android --release
+	mv -b ./target/i686-linux-android/release/*.so ./native/lib/i686-linux-android
+
+build-x86_64-linux-android:
+	cargo build --target x86_64-linux-android
+	mv -b ./target/x86_64-linux-android/debug/*.so ./native/lib/x86_64-linux-android
+
+build-x86_64-linux-android-release:
+	cargo build --target x86_64-linux-android --release
+	mv -b ./target/x86_64-linux-android/release/*.so ./native/lib/x86_64-linux-android
 
 build-x86_64-unknown-linux-gnu:
 	cargo build --target x86_64-unknown-linux-gnu
@@ -50,10 +66,10 @@ release-debug: build clean
 	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
 	godot --export-debug "Linux/X11" ./target/{{project-name}}.debug.x86_64
 
-release-android: build-aarch64-linux-android-release build-armv7-linux-androideabi-release clean
+release-android: build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-i686-linux-android build-x86_64-linux-android clean
 	godot --export "Android" ./native/bin/android/{{project-name}}.apk
 
-release-android-debug: build-aarch64-linux-android build-armv7-linux-androideabi clean
+release-android-debug: build-aarch64-linux-android build-armv7-linux-androideabi build-i686-linux-android-release build-x86_64-linux-android-release clean
 	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
 
 release-linux-x11: build-x11-release clean
