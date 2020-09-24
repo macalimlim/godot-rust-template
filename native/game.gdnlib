@@ -9,6 +9,8 @@ reloadable=true
 
 Android.armeabi-v7a="res://native/lib/armv7-linux-androideabi/lib{{crate_name}}.so"
 Android.arm64-v8a="res://native/lib/aarch64-linux-android/lib{{crate_name}}.so"
+Android.x86="res://native/lib/i686-linux-android/lib{{crate_name}}.so"
+Android.x86_64="res://native/lib/x86_64-linux-android/lib{{crate_name}}.so"
 OSX.64="res://native/lib/lib{{crate_name}}.dylib"
 Windows.64="res://native/lib/{{crate_name}}.dll"
 X11.64="res://native/lib/x86_64-unknown-linux-gnu/lib{{crate_name}}.so"
@@ -17,6 +19,8 @@ X11.64="res://native/lib/x86_64-unknown-linux-gnu/lib{{crate_name}}.so"
 
 Android.armeabi-v7a=[  ]
 Android.arm64-v8a=[  ]
+Android.x86=[  ]
+Android.x86_64=[  ]
 OSX.64=[  ]
 Windows.64=[  ]
 X11.64=[  ]
