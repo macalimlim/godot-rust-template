@@ -1,49 +1,97 @@
+{%- comment -%} dynamic make targets {%- endcomment -%}
+{%- assign target_dir = "./target" -%}
+{%- assign lib_dir = "./native/lib" -%}
+{%- assign bin_dir = "./native/bin" -%}
+{%- assign aarch64-linux-android-debug = "aarch64-linux-android,Android,debug" | split: "|" -%}
+{%- assign aarch64-linux-android-release = "aarch64-linux-android,Android,release" | split: "|" -%}
+{%- assign armv7-linux-androideabi-debug = "armv7-linux-androideabi,Android,debug" | split: "|" -%}
+{%- assign armv7-linux-androideabi-release = "armv7-linux-androideabi,Android,release" | split: "|" -%}
+{%- assign arm_android_targets = aarch64-linux-android-debug | concat: aarch64-linux-android-release | concat: armv7-linux-androideabi-debug | concat: armv7-linux-androideabi-release | compact -%}
+{%- assign i686-linux-android-debug = "i686-linux-android,Android,debug" | split: "|" -%}
+{%- assign i686-linux-android-release = "i686-linux-android,Android,release" | split: "|" -%}
+{%- assign x86_64-linux-android-debug = "x86_64-linux-android,Android,debug" | split: "|" -%}
+{%- assign x86_64-linux-android-release = "x86_64-linux-android,Android,release" | split: "|" -%}
+{%- assign x86_android_targets = i686-linux-android-debug | concat: i686-linux-android-release | concat: x86_64-linux-android-debug | concat: x86_64-linux-android-release | compact -%}
+{%- assign android_targets = arm_android_targets | concat: x86_android_targets | compact -%}
+{%- assign x86_64-unknown-linux-gnu-debug = "x86_64-unknown-linux-gnu,Linux/X11,debug" | split: "|" -%}
+{%- assign x86_64-unknown-linux-gnu-release = "x86_64-unknown-linux-gnu,Linux/X11,release" | split: "|" -%}
+{%- assign x86_linux_targets = x86_64-unknown-linux-gnu-debug | concat: x86_64-unknown-linux-gnu-release | compact -%}
+{%- assign all_targets = android_targets | concat: x86_linux_targets | compact -%}
+build-debug:
+{%  for target in all_targets -%}
+{%-   assign t = target | split: "," -%}
+{%-   assign build_target = t[0] -%}
+{%-   assign target_type = t[2] -%}
+{%-   if target_type == "debug" -%}
+	make build-{{build_target}}-{{target_type}}
+{%    endif %}
+{%- endfor %}
+build-release:
+{%  for target in all_targets -%}
+{%-   assign t = target | split: "," -%}
+{%-   assign build_target = t[0] -%}
+{%-   assign target_type = t[2] -%}
+{%-   if target_type == "release" -%}
+	make build-{{build_target}}-{{target_type}}
+{%    endif %}
+{%- endfor %}
+export-debug:
+{%  for target in all_targets -%}
+{%-   assign t = target | split: "," -%}
+{%-   assign build_target = t[0] -%}
+{%-   assign target_type = t[2] -%}
+{%-   if target_type == "debug" -%}
+	make export-{{build_target}}-{{target_type}}
+{%   endif %}
+{%- endfor %}
+export-release:
+{%  for target in all_targets -%}
+{%-   assign t = target | split: "," -%}
+{%-   assign build_target = t[0] -%}
+{%-   assign target_type = t[2] -%}
+{%-   if target_type == "release" -%}
+	make export-{{build_target}}-{{target_type}}
+{%    endif %}
+{%- endfor %}
+{%- for target in all_targets %}
+{%-   assign t = target | split: "," -%}
+{%-   assign build_target = t[0] -%}
+{%-   assign export_target = t[1] -%}
+{%-   assign target_type = t[2] -%}
+{%-   capture exported_project -%}
+{%-     case export_target -%}
+{%-       when "Android" -%}
+{{project-name}}.{{target_type}}.{{build_target}}.apk
+{%-       when "Linux/X11" -%}
+{{project-name}}.{{target_type}}.{{build_target}}
+{%-     endcase -%}
+{%-   endcapture -%}
+{%-   capture build_arg -%}
+{%-     case target_type -%}
+{%-       when "debug" -%}
+ 
+{%-       when "release" -%}
+--release
+{%-     endcase -%}
+{%-   endcapture -%}
+{%-   capture export_arg -%}
+{%-     case target_type -%}
+{%-       when "debug" -%}
+--export-debug
+{%-       when "release" -%}
+--export
+{%-     endcase -%}
+{%-   endcapture %}
+build-{{build_target}}-{{target_type}}:
+	cargo build --target {{build_target}} {{build_arg}}
+	mv -b {{target_dir}}/{{build_target}}/{{target_type}}/*.so {{lib_dir}}/{{build_target}}
+
+export-{{build_target}}-{{target_type}}: clean build-{{build_target}}-{{target_type}}
+	godot {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" {{bin_dir}}/{{build_target}}/{{exported_project}}
+{% endfor -%}
+{% comment %} static make targets {% endcomment %}
 audit:
 	cargo-audit audit
-
-build: clean build-aarch64-linux-android build-armv7-linux-androideabi build-i686-linux-android build-x86_64-linux-android build-x86_64-unknown-linux-gnu
-
-build-release: clean build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-i686-linux-android-release build-x86_64-linux-android-release build-x86_64-unknown-linux-gnu-release
-
-build-aarch64-linux-android:
-	cargo build --target aarch64-linux-android
-	mv -b ./target/aarch64-linux-android/debug/*.so ./native/lib/aarch64-linux-android
-
-build-aarch64-linux-android-release:
-	cargo build --target aarch64-linux-android --release
-	mv -b ./target/aarch64-linux-android/release/*.so ./native/lib/aarch64-linux-android
-
-build-armv7-linux-androideabi:
-	cargo build --target armv7-linux-androideabi
-	mv -b ./target/armv7-linux-androideabi/debug/*.so ./native/lib/armv7-linux-androideabi
-
-build-armv7-linux-androideabi-release:
-	cargo build --target armv7-linux-androideabi --release
-	mv -b ./target/armv7-linux-androideabi/release/*.so ./native/lib/armv7-linux-androideabi
-
-build-i686-linux-android:
-	cargo build --target i686-linux-android
-	mv -b ./target/i686-linux-android/debug/*.so ./native/lib/i686-linux-android
-
-build-i686-linux-android-release:
-	cargo build --target i686-linux-android --release
-	mv -b ./target/i686-linux-android/release/*.so ./native/lib/i686-linux-android
-
-build-x86_64-linux-android:
-	cargo build --target x86_64-linux-android
-	mv -b ./target/x86_64-linux-android/debug/*.so ./native/lib/x86_64-linux-android
-
-build-x86_64-linux-android-release:
-	cargo build --target x86_64-linux-android --release
-	mv -b ./target/x86_64-linux-android/release/*.so ./native/lib/x86_64-linux-android
-
-build-x86_64-unknown-linux-gnu:
-	cargo build --target x86_64-unknown-linux-gnu
-	mv -b ./target/x86_64-unknown-linux-gnu/debug/*.so ./native/lib/x86_64-unknown-linux-gnu
-
-build-x86_64-unknown-linux-gnu-release:
-	cargo build --target x86_64-unknown-linux-gnu --release
-	mv -b ./target/x86_64-unknown-linux-gnu/release/*.so ./native/lib/x86_64-unknown-linux-gnu
 
 check: clean
 	cargo check
@@ -58,27 +106,8 @@ edit:
 	$EDITOR src/lib.rs &
 	godot -e &
 
-release: build-release clean
-	godot --export "Android" ./native/bin/android/{{project-name}}.apk
-	godot --export "Linux/X11" ./native/bin/linux-x11/{{project-name}}.x86_64
-
-release-debug: build clean
-	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
-	godot --export-debug "Linux/X11" ./native/bin/linux-x11/{{project-name}}.debug.x86_64
-
-release-android: build-aarch64-linux-android-release build-armv7-linux-androideabi-release build-i686-linux-android build-x86_64-linux-android clean
-	godot --export "Android" ./native/bin/android/{{project-name}}.apk
-
-release-android-debug: build-aarch64-linux-android build-armv7-linux-androideabi build-i686-linux-android-release build-x86_64-linux-android-release clean
-	godot --export-debug "Android" ./native/bin/android/{{project-name}}.debug.apk
-
-release-linux-x11: build-x86_64-unknown-linux-gnu-release clean
-	godot --export "Linux/X11" ./native/bin/linux-x11/{{project-name}}.x86_64
-
-release-linux-x11-debug: build-x86_64-unknown-linux-gnu clean
-	godot --export-debug "Linux/X11" ./native/bin/linux-x11/{{project-name}}.debug.x86_64
-
-run: build-x86_64-unknown-linux-gnu
+run:
+	make build-x86_64-unknown-linux-gnu-debug
 	godot -d
 
 shell:
