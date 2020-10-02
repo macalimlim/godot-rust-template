@@ -13,9 +13,11 @@
 {%- assign x86_64-linux-android-release = "x86_64-linux-android,Android,release" | split: "|" -%}
 {%- assign x86_android_targets = i686-linux-android-debug | concat: i686-linux-android-release | concat: x86_64-linux-android-debug | concat: x86_64-linux-android-release | compact -%}
 {%- assign android_targets = arm_android_targets | concat: x86_android_targets | compact -%}
+{%- assign i686-unknown-linux-gnu-debug = "i686-unknown-linux-gnu,Linux/X11,debug" | split: "|" -%}
+{%- assign i686-unknown-linux-gnu-release = "i686-unknown-linux-gnu,Linux/X11,release" | split: "|" -%}
 {%- assign x86_64-unknown-linux-gnu-debug = "x86_64-unknown-linux-gnu,Linux/X11,debug" | split: "|" -%}
 {%- assign x86_64-unknown-linux-gnu-release = "x86_64-unknown-linux-gnu,Linux/X11,release" | split: "|" -%}
-{%- assign x86_linux_targets = x86_64-unknown-linux-gnu-debug | concat: x86_64-unknown-linux-gnu-release | compact -%}
+{%- assign x86_linux_targets = i686-unknown-linux-gnu-debug | concat: i686-unknown-linux-gnu-release | concat: x86_64-unknown-linux-gnu-debug | concat: x86_64-unknown-linux-gnu-release | compact -%}
 {%- assign all_targets = android_targets | concat: x86_linux_targets | compact -%}
 build-debug:
 {%  for target in all_targets -%}
@@ -69,7 +71,7 @@ export-release:
 {%-   capture build_arg -%}
 {%-     case target_type -%}
 {%-       when "debug" -%}
- 
+
 {%-       when "release" -%}
 --release
 {%-     endcase -%}
