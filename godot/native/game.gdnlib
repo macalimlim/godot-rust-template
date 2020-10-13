@@ -1,4 +1,4 @@
-{%- assign lib_dir = "res://native/lib" -%}
+{%- assign lib_dir = "res://../lib" -%}
 [general]
 
 singleton=false

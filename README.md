@@ -1,4 +1,4 @@
-![Project Logo](./assets/godot-ferris-128x128.png)
+![Project Logo](./godot/assets/godot-ferris-128x128.png)
 
 # {{project-name}}
 > Put the description here!

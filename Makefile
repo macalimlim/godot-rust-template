@@ -1,7 +1,7 @@
 {%- comment -%} dynamic make targets {%- endcomment -%}
 {%- assign target_dir = "./target" -%}
-{%- assign lib_dir = "./native/lib" -%}
-{%- assign bin_dir = "./native/bin" -%}
+{%- assign lib_dir = "./lib" -%}
+{%- assign bin_dir = "../bin" -%}
 {%- assign aarch64-linux-android-debug = "aarch64-linux-android,Android,debug" | split: "|" -%}
 {%- assign aarch64-linux-android-release = "aarch64-linux-android,Android,release" | split: "|" -%}
 {%- assign armv7-linux-androideabi-debug = "armv7-linux-androideabi,Android,debug" | split: "|" -%}
@@ -19,13 +19,14 @@
 {%- assign x86_64-unknown-linux-gnu-release = "x86_64-unknown-linux-gnu,Linux/X11,release" | split: "|" -%}
 {%- assign x86_linux_targets = i686-unknown-linux-gnu-debug | concat: i686-unknown-linux-gnu-release | concat: x86_64-unknown-linux-gnu-debug | concat: x86_64-unknown-linux-gnu-release | compact -%}
 {%- assign all_targets = android_targets | concat: x86_linux_targets | compact -%}
+{%- assign godot_project_path_arg = "--path godot/" -%}
 build-debug:
 {%  for target in all_targets -%}
 {%-   assign t = target | split: "," -%}
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "debug" -%}
-	make build-{{build_target}}-{{target_type}}
+	# make build-{{build_target}}-{{target_type}}
 {%    endif %}
 {%- endfor %}
 build-release:
@@ -34,7 +35,7 @@ build-release:
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "release" -%}
-	make build-{{build_target}}-{{target_type}}
+	# make build-{{build_target}}-{{target_type}}
 {%    endif %}
 {%- endfor %}
 export-debug:
@@ -43,7 +44,7 @@ export-debug:
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "debug" -%}
-	make export-{{build_target}}-{{target_type}}
+	# make export-{{build_target}}-{{target_type}}
 {%   endif %}
 {%- endfor %}
 export-release:
@@ -52,7 +53,7 @@ export-release:
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "release" -%}
-	make export-{{build_target}}-{{target_type}}
+	# make export-{{build_target}}-{{target_type}}
 {%    endif %}
 {%- endfor %}
 {%- for target in all_targets %}
@@ -89,7 +90,7 @@ build-{{build_target}}-{{target_type}}:
 	mv -b {{target_dir}}/{{build_target}}/{{target_type}}/*.so {{lib_dir}}/{{build_target}}
 
 export-{{build_target}}-{{target_type}}: clean build-{{build_target}}-{{target_type}}
-	godot {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" {{bin_dir}}/{{build_target}}/{{exported_project}}
+	cd godot/ ; godot {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" {{bin_dir}}/{{build_target}}/{{exported_project}}
 {% endfor -%}
 {% comment %} static make targets {% endcomment %}
 audit:
@@ -105,12 +106,12 @@ doc: clean
 	cargo doc --no-deps --open -v
 
 edit:
-	$EDITOR src/lib.rs &
-	godot -e &
+	# ${EDITOR} rust/src/lib.rs &
+	godot {{godot_project_path_arg}} -e &
 
 run:
 	make build-x86_64-unknown-linux-gnu-debug
-	godot -d
+	godot {{godot_project_path_arg}} -d
 
 shell:
 	nix-shell --pure
