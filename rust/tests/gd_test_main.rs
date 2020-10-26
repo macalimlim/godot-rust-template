@@ -1,3 +1,2 @@
 #[test]
-fn test_get_message() {
-}
+fn test_get_message() {}
