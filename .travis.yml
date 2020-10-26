@@ -1,0 +1,13 @@
+language: rust
+rust: stable
+os: linux
+dist: xenial
+before_install:
+  - sudo apt-get -y install tree
+jobs:
+  fast_finish: true
+  include:
+  - name: "godot-rust-template test"
+    if: type = push
+    env: RUST_BACKTRACE=1
+    script: bash sh/test-template.sh
