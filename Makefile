@@ -102,6 +102,12 @@ check: clean
 clean:
 	cargo clean
 
+create-debug-keystore:
+	keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore {{project-name}}.debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999 -deststoretype pkcs12
+
+create-release-keystore:
+	keytool -v -genkey -v -keystore {{project-name}}.release.keystore -alias {{project-name}} -keyalg RSA -validity 10000
+
 doc: clean
 	cargo doc --no-deps --open -v
 

@@ -1,5 +1,6 @@
 **/*.orig
 *.elc
+*.keystore
 *.rel
 *_archive
 *_flymake.*
