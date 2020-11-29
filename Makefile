@@ -116,8 +116,13 @@ edit:
 	godot {{godot_project_path_arg}} -e &
 
 run:
-	make build-x86_64-unknown-linux-gnu-debug
+	# make build-x86_64-unknown-linux-gnu-debug
+	cargo build
+	mv ./target/debug/*.* ./lib
 	godot {{godot_project_path_arg}} -d
+
+watch:
+	cargo watch -x build -s 'mv ./target/debug/*.* ./lib'
 
 shell:
 	nix-shell --pure
