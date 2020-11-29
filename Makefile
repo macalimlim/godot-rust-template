@@ -122,7 +122,8 @@ run:
 	godot {{godot_project_path_arg}} -d
 
 watch:
-	cargo watch -x build -s 'mv ./target/debug/*.* ./lib'
+	cargo watch -x build -s 'mv ./target/debug/*.* ./lib' &
+	godot {{godot_project_path_arg}} -d
 
 shell:
 	nix-shell --pure
