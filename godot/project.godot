@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="{{project-name}}"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/Game.tscn"
 config/icon="res://assets/godot-ferris-32x32.png"
 
 [rendering]
