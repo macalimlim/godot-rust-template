@@ -1,27 +1,27 @@
 use gdnative::api::*;
 use gdnative::prelude::*;
 
-/// The Main "class"
+/// The Game "class"
 #[derive(NativeClass)]
 #[inherit(Node)]
 #[register_with(Self::register_builder)]
-pub struct Main {
+pub struct Game {
     name: String,
 }
 
 // __One__ `impl` block can have the `#[methods]` attribute, which will generate
 // code to automatically bind any exported methods to Godot.
 #[methods]
-impl Main {
+impl Game {
     // Register the builder for methods, properties and/or signals.
     fn register_builder(_builder: &ClassBuilder<Self>) {
-        godot_print!("Main builder is registered!");
+        godot_print!("Game builder is registered!");
     }
 
     /// The "constructor" of the class.
     fn new(_owner: &Node) -> Self {
-        godot_print!("Main is created!");
-        Main {
+        godot_print!("Game is created!");
+        Game {
             name: "".to_string(),
         }
     }
@@ -34,7 +34,7 @@ impl Main {
     unsafe fn _ready(&mut self, _owner: &Node) {
         // The `godot_print!` macro works like `println!` but prints to the Godot-editor
         // output tab as well.
-        self.name = "Main".to_string();
+        self.name = "Game".to_string();
         godot_print!("{} is ready!", self.name);
     }
 
