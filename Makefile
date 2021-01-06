@@ -18,7 +18,10 @@
 {%- assign x86_64-unknown-linux-gnu-debug = "x86_64-unknown-linux-gnu,Linux/X11,debug" | split: "|" -%}
 {%- assign x86_64-unknown-linux-gnu-release = "x86_64-unknown-linux-gnu,Linux/X11,release" | split: "|" -%}
 {%- assign x86_linux_targets = i686-unknown-linux-gnu-debug | concat: i686-unknown-linux-gnu-release | concat: x86_64-unknown-linux-gnu-debug | concat: x86_64-unknown-linux-gnu-release | compact -%}
-{%- assign all_targets = android_targets | concat: x86_linux_targets | compact -%}
+{%- assign x86_64-apple-darwin-debug = "x86_64-apple-darwin,Mac OSX,debug" | split: "|" -%}
+{%- assign x86_64-apple-darwin-release = "x86_64-apple-darwin,Mac OSX,release" | split: "|" -%}
+{%- assign mac_osx_targets = x86_64-apple-darwin-debug | concat: x86_64-apple-darwin-release | compact -%}
+{%- assign all_targets = android_targets | concat: x86_linux_targets | concat: mac_osx_targets | compact -%}
 {%- assign godot_project_path_arg = "--path godot/" -%}
 build-debug:
 {%  for target in all_targets -%}
@@ -67,6 +70,18 @@ export-release:
 {{project-name}}.{{target_type}}.{{build_target}}.apk
 {%-       when "Linux/X11" -%}
 {{project-name}}.{{target_type}}.{{build_target}}
+{%-       when "Mac OSX" -%}
+{{project-name}}.{{target_type}}.{{build_target}}
+{%-     endcase -%}
+{%-   endcapture -%}
+{%-   capture lib_ext -%}
+{%-     case export_target -%}
+{%-       when "Android" -%}
+so
+{%-       when "Linux/X11" -%}
+so
+{%-       when "Mac OSX" -%}
+dylib
 {%-     endcase -%}
 {%-   endcapture -%}
 {%-   capture build_arg -%}
@@ -87,7 +102,7 @@ export-release:
 {%-   endcapture %}
 build-{{build_target}}-{{target_type}}:
 	cargo build --target {{build_target}} {{build_arg}}
-	mv -b {{target_dir}}/{{build_target}}/{{target_type}}/*.so {{lib_dir}}/{{build_target}}
+	mv -b {{target_dir}}/{{build_target}}/{{target_type}}/*.{{lib_ext}} {{lib_dir}}/{{build_target}}
 
 export-{{build_target}}-{{target_type}}: clean build-{{build_target}}-{{target_type}}
 	cd godot/ ; godot {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" {{bin_dir}}/{{build_target}}/{{exported_project}}
