@@ -21,7 +21,10 @@
 {%- assign x86_64-apple-darwin-debug = "x86_64-apple-darwin,Mac OSX,debug" | split: "|" -%}
 {%- assign x86_64-apple-darwin-release = "x86_64-apple-darwin,Mac OSX,release" | split: "|" -%}
 {%- assign mac_osx_targets = x86_64-apple-darwin-debug | concat: x86_64-apple-darwin-release | compact -%}
-{%- assign all_targets = android_targets | concat: x86_linux_targets | concat: mac_osx_targets | compact -%}
+{%- assign aarch64-apple-ios-debug = "aarch64-apple-ios,iOS,debug" | split: "|" -%}
+{%- assign aarch64-apple-ios-release = "aarch64-apple-ios,iOS,release" | split: "|" -%}
+{%- assign ios_targets = aarch64-apple-ios-debug | concat: aarch64-apple-ios-release | compact -%}
+{%- assign all_targets = android_targets | concat: x86_linux_targets | concat: mac_osx_targets | concat: ios_targets | compact -%}
 {%- assign godot_project_path_arg = "--path godot/" -%}
 build-debug:
 {%  for target in all_targets -%}
@@ -72,6 +75,8 @@ export-release:
 {{project-name}}.{{target_type}}.{{build_target}}
 {%-       when "Mac OSX" -%}
 {{project-name}}.{{target_type}}.{{build_target}}
+{%-       when "iOS" -%}
+{{project-name}}.{{target_type}}.{{build_target}}.ipa
 {%-     endcase -%}
 {%-   endcapture -%}
 {%-   capture lib_ext -%}
@@ -82,6 +87,8 @@ so
 so
 {%-       when "Mac OSX" -%}
 dylib
+{%-       when "iOS" -%}
+a
 {%-     endcase -%}
 {%-   endcapture -%}
 {%-   capture build_arg -%}
