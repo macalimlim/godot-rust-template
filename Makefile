@@ -24,7 +24,17 @@
 {%- assign aarch64-apple-ios-debug = "aarch64-apple-ios,iOS,debug" | split: "|" -%}
 {%- assign aarch64-apple-ios-release = "aarch64-apple-ios,iOS,release" | split: "|" -%}
 {%- assign ios_targets = aarch64-apple-ios-debug | concat: aarch64-apple-ios-release | compact -%}
-{%- assign all_targets = android_targets | concat: x86_linux_targets | concat: mac_osx_targets | concat: ios_targets | compact -%}
+{%- assign i686-pc-windows-gnu-debug = "i686-pc-windows-gnu,Windows Desktop,debug" | split: "|" -%}
+{%- assign i686-pc-windows-gnu-release = "i686-pc-windows-gnu,Windows Desktop,release" | split: "|" -%}
+{%- assign x86_64-pc-windows-gnu-debug = "x86_64-pc-windows-gnu,Windows Desktop,debug" | split: "|" -%}
+{%- assign x86_64-pc-windows-gnu-release = "x86_64-pc-windows-gnu,Windows Desktop,release" | split: "|" -%}
+{%- assign i686-pc-windows-msvc-debug = "i686-pc-windows-msvc,Windows Desktop,debug" | split: "|" -%}
+{%- assign i686-pc-windows-msvc-release = "i686-pc-windows-msvc,Windows Desktop,release" | split: "|" -%}
+{%- assign x86_64-pc-windows-msvc-debug = "x86_64-pc-windows-msvc,Windows Desktop,debug" | split: "|" -%}
+{%- assign x86_64-pc-windows-msvc-release = "x86_64-pc-windows-msvc,Windows Desktop,release" | split: "|" -%}
+{%- assign windows_gnu_targets = i686-pc-windows-gnu-debug | concat: i686-pc-windows-gnu-release | concat: x86_64-pc-windows-gnu-debug | concat: x86_64-pc-windows-gnu-release | compact -%}
+{%- assign windows_msvc_targets = i686-pc-windows-msvc-debug | concat: i686-pc-windows-msvc-release | concat: x86_64-pc-windows-msvc-debug | concat: x86_64-pc-windows-msvc-release | compact -%}
+{%- assign all_targets = android_targets | concat: x86_linux_targets | concat: mac_osx_targets | concat: ios_targets | concat: windows_gnu_targets | concat: windows_msvc_targets | compact -%}
 {%- assign godot_project_path_arg = "--path godot/" -%}
 build-debug:
 {%  for target in all_targets -%}
@@ -77,6 +87,8 @@ export-release:
 {{project-name}}.{{target_type}}.{{build_target}}
 {%-       when "iOS" -%}
 {{project-name}}.{{target_type}}.{{build_target}}.ipa
+{%-       when "Windows Desktop" -%}
+{{project-name}}.{{target_type}}.{{build_target}}.exe
 {%-     endcase -%}
 {%-   endcapture -%}
 {%-   capture lib_ext -%}
@@ -89,6 +101,8 @@ so
 dylib
 {%-       when "iOS" -%}
 a
+{%-       when "Windows Desktop" -%}
+dll
 {%-     endcase -%}
 {%-   endcapture -%}
 {%-   capture build_arg -%}
