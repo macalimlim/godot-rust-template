@@ -152,7 +152,20 @@ edit:
 	godot {{godot_project_path_arg}} -e &
 
 run:
+{%  case os-arch -%}
+{%-   when "linux-x86" -%}
+	make build-i686-unknown-linux-gnu-debug
+{%-   when "linux-x86_64" -%}
 	make build-x86_64-unknown-linux-gnu-debug
+{%-   when "macos-x86_64" -%}
+	make build-x86_64-apple-darwin-debug
+{%-   when "windows-x86" -%}
+	# make build-i686-pc-windows-gnu-debug
+	make build-i686-pc-windows-msvc-debug
+{%-   when "windows-x86_64" -%}
+	# make build-x86_64-pc-windows-gnu-debug
+	make build-x86_64-pc-windows-msvc-debug
+{%- endcase %}
 	godot {{godot_project_path_arg}} -d
 
 shell:
