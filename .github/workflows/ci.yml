@@ -1,0 +1,14 @@
+name: godot-rust-template
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test_pull_request:
+    runs-on: ubuntu-latest
+    container: macalimlim/grunter:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sh sh/test-run.sh
