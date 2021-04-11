@@ -1,3 +1,29 @@
+{%- comment -%} default target detection
+
+Expected rustc output:
+
+$ rustc --print cfg
+debug_assertions // ignored
+target_arch="x86_64" // 1
+target_endian="little"
+target_env="msvc" // 3
+target_family="windows"
+target_feature="fxsr"
+target_feature="sse"
+target_feature="sse2"
+target_os="windows" // 3 when reversed
+target_pointer_width="64"
+target_vendor="pc" // 1 when reversed
+windows // ignored
+
+{%- endcomment -%}
+RUSTC_CFG = $(shell rustc --print cfg | sort | cut -sd = -f2 | tr "\n" : | tr -d "[:space:]\042")
+RUSTC_CFG_R = $(shell rustc --print cfg | sort -r | cut -sd = -f2 | tr "\n" : | tr -d "[:space:]\042")
+DEFAULT_ARCH = $(shell echo $(RUSTC_CFG) | cut -d : -f1)
+DEFAULT_ENV = $(shell echo $(RUSTC_CFG) | cut -d : -f3)
+DEFAULT_OS = $(shell echo $(RUSTC_CFG_R) | cut -d : -f3)
+DEFAULT_VENDOR = $(shell echo $(RUSTC_CFG_R) | cut -d : -f1)
+DEFAULT_TARGET = $(DEFAULT_ARCH)-$(DEFAULT_VENDOR)-$(DEFAULT_OS)-$(DEFAULT_ENV)
 {%- comment -%} dynamic make targets {%- endcomment -%}
 {%- assign target_dir = "./target" -%}
 {%- assign lib_dir = "./lib" -%}
@@ -151,21 +177,7 @@ edit:
 	# ${EDITOR} rust/src/lib.rs &
 	godot {{godot_project_path_arg}} -e &
 
-run:
-{%  case os-arch -%}
-{%-   when "linux-x86" -%}
-	make build-i686-unknown-linux-gnu-debug
-{%-   when "linux-x86_64" -%}
-	make build-x86_64-unknown-linux-gnu-debug
-{%-   when "macos-x86_64" -%}
-	make build-x86_64-apple-darwin-debug
-{%-   when "windows-x86" -%}
-	# make build-i686-pc-windows-gnu-debug
-	make build-i686-pc-windows-msvc-debug
-{%-   when "windows-x86_64" -%}
-	# make build-x86_64-pc-windows-gnu-debug
-	make build-x86_64-pc-windows-msvc-debug
-{%- endcase %}
+run: build-$(DEFAULT_TARGET)-debug
 	godot {{godot_project_path_arg}} -d
 
 shell:
