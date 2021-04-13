@@ -42,7 +42,7 @@ build-debug:
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "debug" -%}
-	# make build-{{build_target}}-{{target_type}}
+#	make build-{{build_target}}-{{target_type}}
 {%    endif %}
 {%- endfor %}
 build-release:
@@ -51,7 +51,7 @@ build-release:
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "release" -%}
-	# make build-{{build_target}}-{{target_type}}
+#	make build-{{build_target}}-{{target_type}}
 {%    endif %}
 {%- endfor %}
 export-debug:
@@ -60,7 +60,7 @@ export-debug:
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "debug" -%}
-	# make export-{{build_target}}-{{target_type}}
+#	make export-{{build_target}}-{{target_type}}
 {%   endif %}
 {%- endfor %}
 export-release:
@@ -69,7 +69,7 @@ export-release:
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "release" -%}
-	# make export-{{build_target}}-{{target_type}}
+#	make export-{{build_target}}-{{target_type}}
 {%    endif %}
 {%- endfor %}
 {%- for target in all_targets %}
@@ -148,7 +148,7 @@ doc: clean
 	cargo doc --no-deps --open -v
 
 edit:
-	# ${EDITOR} rust/src/lib.rs &
+#	${EDITOR} rust/src/lib.rs &
 	godot {{godot_project_path_arg}} -e &
 
 run:
@@ -160,10 +160,10 @@ run:
 {%-   when "macos-x86_64" -%}
 	make build-x86_64-apple-darwin-debug
 {%-   when "windows-x86" -%}
-	# make build-i686-pc-windows-gnu-debug
+#	make build-i686-pc-windows-gnu-debug
 	make build-i686-pc-windows-msvc-debug
 {%-   when "windows-x86_64" -%}
-	# make build-x86_64-pc-windows-gnu-debug
+#	make build-x86_64-pc-windows-gnu-debug
 	make build-x86_64-pc-windows-msvc-debug
 {%- endcase %}
 	godot {{godot_project_path_arg}} -d
