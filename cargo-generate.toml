@@ -1,2 +1,13 @@
 [template]
-include = ["Cargo.toml", "godot/export_presets.cfg", "godot/native/game.gdnlib", "godot/project.godot", "Makefile", "README.md", "rust/.vscode/launch.json", "rust/Cargo.toml", "shell.nix"]
+include = [
+    "Cargo.toml",
+    "godot/export_presets.cfg",
+    "godot/native/game.gdnlib",
+    "godot/project.godot",
+    "Makefile",
+    "README.md",
+    "rust/.vscode/launch.json",
+    "rust/Cargo.toml",
+    "shell.nix",
+    "xtask/src/main.rs",
+]
