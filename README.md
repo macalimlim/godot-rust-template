@@ -13,11 +13,11 @@
 Put a more general information about your project
 
 ## Setup
-Setup, installation, configuration, etc.
+Setup, installation, configuration, etc. Please read this [wiki](https://github.com/macalimlim/godot-rust-template/wiki) for setting up this template
 
 ## Usage
 ```shell
-$ make run
+$ cargo make run
 ```
 ## Contact
 {{authors}}
