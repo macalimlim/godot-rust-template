@@ -1,8 +1,7 @@
-# TODO: This Makefile will be removed in the future
 {%- comment -%} dynamic make targets {%- endcomment -%}
-{%- assign target_dir = "./target" -%}
-{%- assign lib_dir = "./lib" -%}
-{%- assign bin_dir = "../bin" -%}
+{%- assign target_dir = "target" -%}
+{%- assign lib_dir = "lib" -%}
+{%- assign bin_dir = "bin" -%}
 {%- assign aarch64-linux-android-debug = "aarch64-linux-android,Android,debug" | split: "|" -%}
 {%- assign aarch64-linux-android-release = "aarch64-linux-android,Android,release" | split: "|" -%}
 {%- assign armv7-linux-androideabi-debug = "armv7-linux-androideabi,Android,debug" | split: "|" -%}
@@ -36,44 +35,60 @@
 {%- assign windows_gnu_targets = i686-pc-windows-gnu-debug | concat: i686-pc-windows-gnu-release | concat: x86_64-pc-windows-gnu-debug | concat: x86_64-pc-windows-gnu-release | compact -%}
 {%- assign windows_msvc_targets = i686-pc-windows-msvc-debug | concat: i686-pc-windows-msvc-release | concat: x86_64-pc-windows-msvc-debug | concat: x86_64-pc-windows-msvc-release | compact -%}
 {%- assign all_targets = android_targets | concat: x86_linux_targets | concat: mac_osx_targets | concat: ios_targets | concat: windows_gnu_targets | concat: windows_msvc_targets | compact -%}
-{%- assign godot_project_path_arg = "--path godot/" -%}
-build-debug:
+{%- assign godot_project_path_arg = "--path ../godot/" -%}
+[tasks.build-debug]
+script_runner = "@shell"
+script = '''
 {%  for target in all_targets -%}
 {%-   assign t = target | split: "," -%}
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "debug" -%}
-#	make build-{{build_target}}-{{target_type}}
+# cargo make build-{{build_target}}-{{target_type}}
 {%    endif %}
-{%- endfor %}
-build-release:
+{%- endfor -%}
+'''
+
+[tasks.build-release]
+script_runner = "@shell"
+script = '''
 {%  for target in all_targets -%}
 {%-   assign t = target | split: "," -%}
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "release" -%}
-#	make build-{{build_target}}-{{target_type}}
+# cargo make build-{{build_target}}-{{target_type}}
 {%    endif %}
-{%- endfor %}
-export-debug:
+{%- endfor -%}
+'''
+
+[tasks.export-debug]
+script_runner = "@shell"
+script = '''
 {%  for target in all_targets -%}
 {%-   assign t = target | split: "," -%}
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "debug" -%}
-#	make export-{{build_target}}-{{target_type}}
-{%   endif %}
-{%- endfor %}
-export-release:
+# cargo make export-{{build_target}}-{{target_type}}
+{%    endif %}
+{%- endfor -%}
+'''
+
+[tasks.export-release]
+script_runner = "@shell"
+script = '''
 {%  for target in all_targets -%}
 {%-   assign t = target | split: "," -%}
 {%-   assign build_target = t[0] -%}
 {%-   assign target_type = t[2] -%}
 {%-   if target_type == "release" -%}
-#	make export-{{build_target}}-{{target_type}}
+# cargo make export-{{build_target}}-{{target_type}}
 {%    endif %}
-{%- endfor %}
-{%- for target in all_targets %}
+{%- endfor -%}
+'''
+
+{% for target in all_targets %}
 {%-   assign t = target | split: "," -%}
 {%-   assign build_target = t[0] -%}
 {%-   assign export_target = t[1] -%}
@@ -85,9 +100,9 @@ export-release:
 {%-       when "Linux/X11" -%}
 {{project-name}}.{{target_type}}.{{build_target}}
 {%-       when "Mac OSX" -%}
-{{project-name}}.{{target_type}}.{{build_target}}
+{{project-name}}.{{target_type}}.{{build_target}}.dmg
 {%-       when "iOS" -%}
-{{project-name}}.{{target_type}}.{{build_target}}.ipa
+{{project-name}}.{{target_type}}.{{build_target}}
 {%-       when "Windows Desktop" -%}
 {{project-name}}.{{target_type}}.{{build_target}}.exe
 {%-     endcase -%}
@@ -122,55 +137,112 @@ dll
 --export
 {%-     endcase -%}
 {%-   endcapture %}
-build-{{build_target}}-{{target_type}}:
-	cargo build --target {{build_target}} {{build_arg}}
-	mv -b {{target_dir}}/{{build_target}}/{{target_type}}/*.{{lib_ext}} {{lib_dir}}/{{build_target}}
+[tasks.ps1-build-{{build_target}}-{{target_type}}]
+dependencies = ["clean"]
+script_runner = "@shell"
+script = '''
+cargo build --target {{build_target}} {{build_arg}}
+mv ../{{target_dir}}/{{build_target}}/{{target_type}}/*.{{lib_ext}} ../{{lib_dir}}/{{build_target}}
+'''
 
-export-{{build_target}}-{{target_type}}: clean build-{{build_target}}-{{target_type}}
-	cd godot/ ; godot {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" {{bin_dir}}/{{build_target}}/{{exported_project}}
+[tasks.sh-build-{{build_target}}-{{target_type}}]
+dependencies = ["clean"]
+script_runner = "@shell"
+script = '''
+cargo build --target {{build_target}} {{build_arg}}
+if [[ -f ../{{lib_dir}}/{{build_target}}/*.{{lib_ext}} ]]; then
+  rm ../{{lib_dir}}/{{build_target}}/*.{{lib_ext}}
+fi
+mv ../{{target_dir}}/{{build_target}}/{{target_type}}/*.{{lib_ext}} ../{{lib_dir}}/{{build_target}}
+'''
+
+[tasks.build-{{build_target}}-{{target_type}}]
+run_task = [
+    { name = "ps1-build-{{build_target}}-{{target_type}}", condition = { platforms = ["windows"] } },
+    { name = "sh-build-{{build_target}}-{{target_type}}", condition = { platforms = ["linux", "mac"] } }
+]
+
+[tasks.export-{{build_target}}-{{target_type}}]
+dependencies = ["build-{{build_target}}-{{target_type}}"]
+script_runner = "@shell"
+script = '''
+cd ../godot/
+godot {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" ../{{bin_dir}}/{{build_target}}/{{exported_project}}
+'''
 {% endfor -%}
 {% comment %} static make targets {% endcomment %}
-audit:
-	cargo-audit audit
+[tasks.audit]
+command = "cargo"
+args = ["audit"]
 
-check: clean
-	cargo check
+[tasks.check]
+command = "cargo"
+args = ["check"]
+dependencies = ["clean"]
 
-clean:
-	cargo clean
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
 
-create-debug-keystore:
-	keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore {{project-name}}.debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999 -deststoretype pkcs12
+[tasks.create-debug-keystore]
+script_runner = "@shell"
+script = '''
+keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore {{project-name}}.debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999 -deststoretype pkcs12
+mv -b *.keystore ..
+'''
 
-create-release-keystore:
-	keytool -v -genkey -v -keystore {{project-name}}.release.keystore -alias {{project-name}} -keyalg RSA -validity 10000
+[tasks.create-release-keystore]
+script_runner = "@shell"
+script = '''
+keytool -keyalg RSA -genkeypair -alias {{project-name}} -keypass ${@} -keystore {{project-name}}.release.keystore -storepass ${@} -dname "CN={{project-name}},O=Android,C=US" -validity 10000 -deststoretype pkcs12
+mv -b *.keystore ..
+'''
 
-doc: clean
-	cargo doc --no-deps --open -v
+[tasks.doc]
+command = "cargo"
+args = ["doc", "--no-deps", "--open", "-v"]
+dependencies = ["clean"]
 
-edit:
-#	${EDITOR} rust/src/lib.rs &
-	godot {{godot_project_path_arg}} -e &
+[tasks.edit]
+script_runner = "@shell"
+script = '''
+godot {{godot_project_path_arg}} -e
+'''
 
-run:
-{%  case os-arch -%}
-{%-   when "linux-x86" -%}
-	make build-i686-unknown-linux-gnu-debug
-{%-   when "linux-x86_64" -%}
-	make build-x86_64-unknown-linux-gnu-debug
-{%-   when "macos-x86_64" -%}
-	make build-x86_64-apple-darwin-debug
-{%-   when "windows-x86" -%}
-#	make build-i686-pc-windows-gnu-debug
-	make build-i686-pc-windows-msvc-debug
-{%-   when "windows-x86_64" -%}
-#	make build-x86_64-pc-windows-gnu-debug
-	make build-x86_64-pc-windows-msvc-debug
-{%- endcase %}
-	godot {{godot_project_path_arg}} -d
+[tasks.run-for-linux]
+# dependencies = ["build-i686-unknown-linux-gnu-debug"]
+dependencies = ["build-x86_64-unknown-linux-gnu-debug"]
+run_task = "run-godot"
 
-shell:
-	nix-shell --pure
+[tasks.run-for-macos]
+dependencies = ["build-x86_64-apple-darwin-debug"]
+run_task = "run-godot"
 
-test: clean
-	cargo test
+[tasks.run-for-windows]
+# dependencies = ["build-i686-pc-windows-gnu-debug"]
+# dependencies = ["build-i686-pc-windows-msvc-debug"]
+# dependencies = ["build-x86_64-pc-windows-gnu-debug"]
+dependencies = ["build-x86_64-pc-windows-msvc-debug"]
+run_task = "run-godot"
+
+[tasks.run-godot]
+script_runner = "@shell"
+script = '''
+cd ../godot/
+godot -d
+'''
+
+[tasks.run]
+run_task = [
+    { name = "run-for-windows", condition = { platforms = ["windows"] } },
+    { name = "run-for-linux", condition = { platforms = ["linux"] } },
+    { name = "run-for-macos", condition = { platforms = ["mac"] } }
+]
+
+[tasks.test]
+command = "cargo"
+args = ["test"]
+dependencies = ["clean"]
+
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
