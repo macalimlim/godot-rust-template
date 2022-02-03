@@ -3,7 +3,7 @@ use gdnative::prelude::*;
 
 /// The Game "class"
 #[derive(NativeClass)]
-#[inherit(Node)]
+#[inherit(Spatial)]
 #[register_with(Self::register_builder)]
 pub struct Game {
     name: String,
@@ -19,7 +19,7 @@ impl Game {
     }
 
     /// The "constructor" of the class.
-    fn new(_owner: &Node) -> Self {
+    fn new(_owner: &Spatial) -> Self {
         godot_print!("Game is created!");
         Game {
             name: "".to_string(),
@@ -31,7 +31,7 @@ impl Game {
     // Instead they are "attached" to the parent object, called the "owner".
     // The owner is passed to every single exposed method.
     #[export]
-    unsafe fn _ready(&mut self, _owner: &Node) {
+    unsafe fn _ready(&mut self, _owner: &Spatial) {
         // The `godot_print!` macro works like `println!` but prints to the Godot-editor
         // output tab as well.
         self.name = "Game".to_string();
@@ -40,7 +40,7 @@ impl Game {
 
     // This function will be called in every frame
     #[export]
-    unsafe fn _process(&self, _owner: &Node, delta: f64) {
+    unsafe fn _process(&self, _owner: &Spatial, delta: f64) {
         godot_print!("Inside {} _process(), delta is {}", self.name, delta);
     }
 }
