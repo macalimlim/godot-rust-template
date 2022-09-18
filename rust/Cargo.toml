@@ -2,11 +2,11 @@
 name = "{{crate_name}}"
 version = "0.1.0"
 authors = ["{{authors}}"]
-edition = "2018"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-gdnative = "0.10.0"
+gdnative = "0.10.1"
 # gdnative = { path = "../../godot-rust/gdnative" }
