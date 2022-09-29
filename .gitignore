@@ -33,4 +33,5 @@ rust/**/*.rs.bk
 rust/Cargo.lock
 rust/debug/
 target/
+test.sh
 tramp
