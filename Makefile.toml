@@ -223,7 +223,7 @@ run_task = "run-godot"
 
 [tasks.run-for-macos]
 dependencies = ["build-x86_64-apple-darwin-debug"]
-run_task = "run-godot"
+run_task = "run-godot-macos"
 
 [tasks.run-for-windows]
 # dependencies = ["build-i686-pc-windows-gnu-debug"]
@@ -237,6 +237,13 @@ script_runner = "@shell"
 script = '''
 cd ../godot/
 godot -d
+'''
+
+[tasks.run-godot-macos]
+script_runner = "@shell"
+script = '''
+cd ../godot/
+/Applications/Godot.app/Contents/MacOS/Godot -d
 '''
 
 [tasks.run]
