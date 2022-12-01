@@ -21,7 +21,9 @@
 {%- assign x86_linux_targets = i686-unknown-linux-gnu-debug | concat: i686-unknown-linux-gnu-release | concat: x86_64-unknown-linux-gnu-debug | concat: x86_64-unknown-linux-gnu-release | compact -%}
 {%- assign x86_64-apple-darwin-debug = "x86_64-apple-darwin,Mac OSX,debug" | split: "|" -%}
 {%- assign x86_64-apple-darwin-release = "x86_64-apple-darwin,Mac OSX,release" | split: "|" -%}
-{%- assign mac_osx_targets = x86_64-apple-darwin-debug | concat: x86_64-apple-darwin-release | compact -%}
+{%- assign aarch64-apple-darwin-debug = "aarch64-apple-darwin,Mac OSX,debug" | split: "|" -%}
+{%- assign aarch64-apple-darwin-release = "aarch64-apple-darwin,Mac OSX,release" | split: "|" -%}
+{%- assign mac_osx_targets = x86_64-apple-darwin-debug | concat: x86_64-apple-darwin-release | concat: aarch64-apple-darwin-debug | concat: aarch64-apple-darwin-release | compact -%}
 {%- assign aarch64-apple-ios-debug = "aarch64-apple-ios,iOS,debug" | split: "|" -%}
 {%- assign aarch64-apple-ios-release = "aarch64-apple-ios,iOS,release" | split: "|" -%}
 {%- assign ios_targets = aarch64-apple-ios-debug | concat: aarch64-apple-ios-release | compact -%}
@@ -160,6 +162,8 @@ run:
 	make build-x86_64-unknown-linux-gnu-debug
 {%-   when "macos-x86_64" -%}
 	make build-x86_64-apple-darwin-debug
+{%-   when "macos-aarch64" -%}
+	make build-aarch64-apple-darwin-debug
 {%-   when "windows-x86" -%}
 #	make build-i686-pc-windows-gnu-debug
 	make build-i686-pc-windows-msvc-debug
