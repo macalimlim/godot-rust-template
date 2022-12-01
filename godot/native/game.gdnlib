@@ -14,7 +14,13 @@ Android.x86="{{lib_dir}}/i686-linux-android/lib{{crate_name}}.so"
 Android.x86_64="{{lib_dir}}/x86_64-linux-android/lib{{crate_name}}.so"
 HTML5.wasm32 = "{{lib_dir}}/wasm32-unknown-emscripten/{{crate_name}}.wasm"
 iOS.arm64="{{lib_dir}}/aarch64-apple-ios/lib{{crate_name}}.a"
+{% if os-arch == "macos-aarch64" -%}
+# OSX.64="{{lib_dir}}/x86_64-apple-darwin/lib{{crate_name}}.dylib"
+OSX.64="{{lib_dir}}/aarch64-apple-darwin/lib{{crate_name}}.dylib"
+{% else -%}
 OSX.64="{{lib_dir}}/x86_64-apple-darwin/lib{{crate_name}}.dylib"
+# OSX.64="{{lib_dir}}/aarch64-apple-darwin/lib{{crate_name}}.dylib"
+{% endif -%}
 Server.32="{{lib_dir}}/i686-unknown-linux-gnu/lib{{crate_name}}.so"
 Server.64="{{lib_dir}}/x86_64-unknown-linux-gnu/lib{{crate_name}}.so"
 # Windows.32="{{lib_dir}}/i686-pc-windows-gnu/{{crate_name}}.dll"
