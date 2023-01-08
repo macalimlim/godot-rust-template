@@ -8,5 +8,5 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-gdnative = "0.11.0"
+gdnative = "0.11.1"
 # gdnative = { path = "../../godot-rust/gdnative" }
