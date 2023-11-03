@@ -240,7 +240,7 @@ run_task = "run-godot"
 script_runner = "@shell"
 script = '''
 cd ../godot/
-godot -d
+godot3 -d
 '''
 
 [tasks.run-godot-macos]
