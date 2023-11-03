@@ -147,7 +147,6 @@ wasm
 {%-     endcase -%}
 {%-   endcapture %}
 [tasks.ps1-build-{{build_target}}-{{target_type}}]
-dependencies = ["clean"]
 script_runner = "@shell"
 script = '''
 cargo build --target {{build_target}} {{build_arg}}
@@ -155,7 +154,6 @@ mv ../{{target_dir}}/{{build_target}}/{{target_type}}/*.{{lib_ext}} ../{{lib_dir
 '''
 
 [tasks.sh-build-{{build_target}}-{{target_type}}]
-dependencies = ["clean"]
 script_runner = "@shell"
 script = '''
 cargo build --target {{build_target}} {{build_arg}}
