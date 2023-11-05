@@ -206,6 +206,24 @@ mv -b *.keystore ..
 sed -i "s|keystore/release_password=\".*\"|keystore/release_password=\"${@}\"|g" ../godot/export_presets.cfg
 '''
 
+[tasks.switch-gdnlib-msvc-to-gnu-entry]
+script_runner = "@shell"
+script = '''
+sed -i "s|Windows.64=\"res://../lib/x86_64-pc-windows-msvc/{{project-name}}.dll\"|# Windows.64=\"res://../lib/x86_64-pc-windows-msvc/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+sed -i "s|# Windows.64=\"res://../lib/x86_64-pc-windows-gnu/{{project-name}}.dll\"|Windows.64=\"res://../lib/x86_64-pc-windows-gnu/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+sed -i "s|Windows.32=\"res://../lib/i686-pc-windows-msvc/{{project-name}}.dll\"|# Windows.32=\"res://../lib/i686-pc-windows-msvc/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+sed -i "s|# Windows.32=\"res://../lib/i686-pc-windows-gnu/{{project-name}}.dll\"|Windows.32=\"res://../lib/i686-pc-windows-gnu/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+'''
+
+[tasks.switch-gdnlib-gnu-to-msvc-entry]
+script_runner = "@shell"
+script = '''
+sed -i "s|Windows.64=\"res://../lib/x86_64-pc-windows-gnu/{{project-name}}.dll\"|# Windows.64=\"res://../lib/x86_64-pc-windows-gnu/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+sed -i "s|# Windows.64=\"res://../lib/x86_64-pc-windows-msvc/{{project-name}}.dll\"|Windows.64=\"res://../lib/x86_64-pc-windows-msvc/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+sed -i "s|Windows.32=\"res://../lib/i686-pc-windows-gnu/{{project-name}}.dll\"|# Windows.32=\"res://../lib/i686-pc-windows-gnu/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+sed -i "s|# Windows.32=\"res://../lib/i686-pc-windows-msvc/{{project-name}}.dll\"|Windows.32=\"res://../lib/i686-pc-windows-msvc/{{project-name}}.dll\"|g" ../godot/native/game.gdnlib
+'''
+
 [tasks.doc]
 command = "cargo"
 args = ["doc", "--no-deps", "--open", "-v"]
