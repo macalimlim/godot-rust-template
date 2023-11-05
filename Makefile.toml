@@ -203,6 +203,7 @@ script_runner = "@shell"
 script = '''
 keytool -keyalg RSA -genkeypair -alias {{project-name}} -keypass ${@} -keystore {{project-name}}.release.keystore -storepass ${@} -dname "CN={{project-name}},O=Android,C=US" -validity 10000 -deststoretype pkcs12
 mv -b *.keystore ..
+sed -i "s|keystore/release_password=\".*\"|keystore/release_password=\"${@}\"|g" ../godot/export_presets.cfg
 '''
 
 [tasks.doc]
