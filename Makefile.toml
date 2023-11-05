@@ -174,7 +174,7 @@ dependencies = ["build-{{build_target}}-{{target_type}}"]
 script_runner = "@shell"
 script = '''
 cd ../godot/
-godot {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" ../{{bin_dir}}/{{build_target}}/{{exported_project}}
+godot3 {{export_arg}} "{{export_target}}.{{build_target}}.{{target_type}}" ../{{bin_dir}}/{{build_target}}/{{exported_project}}
 '''
 {% endfor -%}
 {% comment %} static make targets {% endcomment %}
@@ -232,7 +232,7 @@ dependencies = ["clean"]
 [tasks.edit]
 script_runner = "@shell"
 script = '''
-godot {{godot_project_path_arg}} -e
+godot3 -e --path {{godot_project_path_arg}}
 '''
 
 [tasks.run-for-linux]
